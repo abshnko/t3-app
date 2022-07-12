@@ -10,7 +10,7 @@ import { prisma } from '../../../server/db/client';
 export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
-  secret: process.env.SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     // GithubProvider({
     //   clientId: process.env.GITHUB_ID,
