@@ -1,12 +1,24 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import { trpc } from "../utils/trpc";
+import type { NextPage } from 'next';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import Head from 'next/head';
+import { trpc } from '../utils/trpc';
 
 const Home: NextPage = () => {
-  const { data, isLoading } = trpc.useQuery([
-    "example.hello",
-    { text: "from tRPC" },
-  ]);
+  const { data, status } = useSession();
+  const entries = trpc.useQuery(['entry.list']);
+  console.log(entries);
+
+  if (status === 'unauthenticated') {
+    return (
+      <>
+        <button onClick={() => signIn('google')}>Sign in</button>
+      </>
+    );
+  }
+
+  if (status === 'loading') {
+    return <>Loading...</>;
+  }
 
   return (
     <>
@@ -43,8 +55,24 @@ const Home: NextPage = () => {
               </a>
             </li>
           </ul>
+          <div>User: {data?.user?.name}</div>
+          <div>Email: {data?.user?.email}</div>
+          <button onClick={() => signOut()}>Sign out</button>
+          <h3>Entries:</h3>
+          {entries.data?.entries
+            .slice(0)
+            .reverse()
+            .map((entry) => {
+              return (
+                <div key={entry.id}>
+                  <div>{entry.initialText}</div>
+                  <div>{entry.correctedText}</div>
+                  <div>{entry.createdAt}</div>
+                </div>
+              );
+            })}
 
-          <div>{data ? <p>{data.greeting}</p> : <p>Loading..</p>}</div>
+          {/* <div>{data ? <p>{data.greeting}</p> : <p>Loading..</p>}</div> */}
         </div>
       </div>
     </>
