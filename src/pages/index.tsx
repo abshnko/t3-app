@@ -11,7 +11,7 @@ const Home: NextPage = () => {
   if (status === 'unauthenticated') {
     return (
       <>
-        <button onClick={() => signIn('google')}>Sign in</button>
+        <button onClick={() => signIn()}>Sign in</button>
       </>
     );
   }
